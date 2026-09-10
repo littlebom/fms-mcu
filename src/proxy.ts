@@ -2,13 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { CURRENT_PATH_HEADER } from "@/shared/lib/security/callback-url";
 
-const PUBLIC_PREFIXES = ["/reset-password/", "/verify-email/", "/api/auth/", "/_next/", "/favicon.ico"];
+const PUBLIC_PATHS = ["/", "/articles", "/faculty", "/programs", "/documents", "/facilities"];
+const PUBLIC_PREFIXES = [
+  "/articles/",
+  "/faculty/",
+  "/programs/",
+  "/documents/",
+  "/facilities/",
+  "/reset-password/",
+  "/verify-email/",
+  "/api/auth/",
+  "/_next/",
+  "/favicon.ico",
+];
 const GUEST_ONLY = ["/login", "/forgot-password"];
 
 /** ด่านตรวจระดับ route — ไม่แตะ DB (edge) · สิทธิ์ละเอียดตรวจใน Server Action ผ่าน requirePermission */
 export async function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
-  if (PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) return NextResponse.next();
+  if (PUBLIC_PATHS.includes(pathname) || PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) {
+    return NextResponse.next();
+  }
 
   const secureCookie = (process.env.APP_URL ?? "").startsWith("https://");
   const token = await getToken({ req, secret: process.env.AUTH_SECRET, secureCookie });
@@ -16,9 +30,6 @@ export async function proxy(req: NextRequest) {
 
   if (GUEST_ONLY.includes(pathname)) {
     return loggedIn ? NextResponse.redirect(new URL("/dashboard", req.url)) : NextResponse.next();
-  }
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL(loggedIn ? "/dashboard" : "/login", req.url));
   }
   if (!loggedIn) {
     const login = new URL("/login", req.url);

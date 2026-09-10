@@ -1,6 +1,11 @@
-import { LayoutDashboard, Users, Settings, Layers, type LucideIcon } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Layers, Newspaper, UserCheck, GraduationCap, FileDown, Building2, CalendarCheck, type LucideIcon } from "lucide-react";
 import { hasPermission, P } from "@/features/identity";
 import { SAMPLE_P } from "@/features/sample";
+import { STAFF_P } from "@/features/staff";
+import { NEWS_P } from "@/features/news";
+import { CURRICULUM_P } from "@/features/curriculum";
+import { DOC_P } from "@/features/documents";
+import { FACILITY_P } from "@/features/facilities";
 
 export interface NavItem {
   /** i18n key */
@@ -16,6 +21,29 @@ export interface NavCrumb { title: string; href: string }
 
 export const sidebarGroups: NavGroup[] = [
   { label: "nav.group.overview", items: [{ title: "nav.dashboard", href: "/dashboard", icon: LayoutDashboard }] },
+  {
+    label: "roles.module.curriculum",
+    items: [{ title: "curriculum.nav", href: "/academic-programs", icon: GraduationCap, permission: CURRICULUM_P.curriculumRead }],
+  },
+  {
+    label: "roles.module.documents",
+    items: [{ title: "documents.nav", href: "/admin-documents", icon: FileDown, permission: DOC_P.documentRead }],
+  },
+  {
+    label: "roles.module.facilities",
+    items: [
+      { title: "facilities.nav", href: "/admin-facilities", icon: Building2, permission: FACILITY_P.facilityRead },
+      { title: "reservations.nav", href: "/admin-reservations", icon: CalendarCheck, permission: FACILITY_P.reservationRead },
+    ],
+  },
+  {
+    label: "roles.module.news",
+    items: [{ title: "news.nav", href: "/news", icon: Newspaper, permission: NEWS_P.newsRead }],
+  },
+  {
+    label: "roles.module.staff",
+    items: [{ title: "staff.nav", href: "/staff", icon: UserCheck, permission: STAFF_P.staffRead }],
+  },
   {
     label: "nav.group.sample",
     items: [{ title: "sample.nav", href: "/sample", icon: Layers, permission: SAMPLE_P.sampleRead }],
