@@ -153,6 +153,13 @@ export const MESSAGES: Dictionary = {
   "settings.paletteLabel": { th: "เลือกโทนสี", en: "Choose palette" },
   "settings.coralWarn": { th: "โทนส้มใช้ได้เฉพาะหน้าที่เนื้อหาอยู่บนการ์ด", en: "Coral is only suitable when content sits on cards" },
   "settings.saveOk": { th: "บันทึกการตั้งค่าแล้ว", en: "Settings saved" },
+  "settings.logoUpload": { th: "อัปโหลดโลโก้", en: "Upload logo" },
+  "settings.logoUploadHint": { th: "PNG, JPG, WebP, SVG ไม่เกิน 2 MB", en: "PNG, JPG, WebP, SVG up to 2 MB" },
+  "settings.logoPreview": { th: "ตัวอย่างโลโก้", en: "Logo preview" },
+  "settings.uploading": { th: "กำลังอัปโหลด...", en: "Uploading..." },
+  "settings.uploadFail": { th: "อัปโหลดไม่สำเร็จ", en: "Upload failed" },
+  "settings.uploadTooLarge": { th: "ไฟล์ใหญ่เกิน 2 MB", en: "File exceeds 2 MB" },
+  "settings.uploadBadType": { th: "รองรับเฉพาะ PNG, JPG, WebP, SVG", en: "Only PNG, JPG, WebP, SVG are supported" },
   // me
   "me.title": { th: "โปรไฟล์ของฉัน", en: "My profile" },
   "me.name": { th: "ชื่อที่แสดง", en: "Display name" },
