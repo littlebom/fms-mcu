@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { TFunction } from "@/shared/lib/i18n/translate";
@@ -10,8 +7,6 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ t }: HeroSectionProps) {
-  const [query, setQuery] = useState("");
-
   return (
     <section className="relative overflow-hidden pt-10 pb-16 lg:pt-16 lg:pb-24">
       {/* Background: Clean, airy Liyon backdrop with very subtle glow */}
@@ -71,20 +66,13 @@ export function HeroSection({ t }: HeroSectionProps) {
             {/* ── Monotree Combined Input + Action Button ── */}
             <div className="max-w-md">
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (query.trim()) {
-                    window.location.href = `/programs?q=${encodeURIComponent(query)}`;
-                  } else {
-                    window.location.href = "/programs";
-                  }
-                }}
+                action="/programs"
+                method="GET"
                 className="flex items-center gap-2 p-1.5 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-strong)] shadow-sm hover:border-[var(--brand)] focus-within:border-[var(--brand)] focus-within:ring-2 focus-within:ring-[var(--brand-glow)] transition-all"
               >
                 <input
                   type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  name="q"
                   placeholder={t("portal.hero.inputPlaceholder")}
                   className="flex-1 bg-transparent px-3.5 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text-muted)] outline-none min-w-0"
                 />
