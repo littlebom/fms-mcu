@@ -14,6 +14,7 @@ const PUBLIC_PREFIXES = [
   "/api/auth/",
   "/_next/",
   "/favicon.ico",
+  "/videos/",
 ];
 const GUEST_ONLY = ["/login", "/forgot-password"];
 
@@ -48,5 +49,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp4|webm)$).*)"],
 };
