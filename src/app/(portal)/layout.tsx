@@ -3,13 +3,16 @@ import Image from "next/image";
 import { getT } from "@/i18n/server";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { Button } from "@/components/ui/button";
-import { GraduationCap, Newspaper, Users, BookOpen, FileDown, ArrowRight, Building2, Mail, Phone } from "lucide-react";
+import { GraduationCap, Newspaper, Users, BookOpen, FileDown, Building2, Mail, Phone } from "lucide-react";
 import { MobileNav } from "./_components/mobile-nav";
-import { getTenantSettings, resolveDefaultTenantId } from "@/features/identity/server";
+import { PortalAvatarMenu } from "./_components/portal-avatar-menu";
+import { getTenantSettings, resolveDefaultTenantId, auth } from "@/features/identity/server";
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
-  const t = await getT();
+  const [t, session] = await Promise.all([
+    getT(),
+    auth().catch(() => null),
+  ]);
 
   // ดึง logoUrl จาก tenant settings
   let logoUrl: string | null = null;
@@ -98,12 +101,13 @@ export default async function PortalLayout({ children }: { children: React.React
           <div className="flex items-center gap-2">
             <ThemeToggle className="icon-btn" label={t("nav.themeToggle")} />
             <LanguageSwitcher className="lang" />
-            <Link href="/dashboard" className="hidden sm:inline-flex">
-              <Button size="sm" variant="outline" className="items-center gap-1.5 text-xs h-9 rounded-[var(--r-ctl)] border-[var(--glass-border)] bg-[var(--glass)] hover:bg-[var(--glass-strong)] text-[var(--text)]">
-                {t("portal.nav.adminConsole")}
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
+            <PortalAvatarMenu
+              user={session?.user ?? null}
+              adminConsoleLabel={t("portal.nav.adminConsole")}
+              profileLabel={t("account.profile")}
+              signOutLabel={t("account.logout")}
+              signInLabel={t("auth.signIn")}
+            />
             {/* Mobile Navigation Drawer */}
             <MobileNav />
           </div>
