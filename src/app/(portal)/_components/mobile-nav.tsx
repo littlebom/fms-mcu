@@ -32,19 +32,18 @@ export function MobileNav() {
   ];
 
   return (
-    <div className="md:hidden">
-      <Button
-        variant="ghost"
-        size="sm"
+    <div className="lg:hidden">
+      <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="h-9 w-9 p-0"
+        className="icon-btn"
         aria-label="Toggle navigation menu"
       >
         {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </Button>
+      </button>
 
       {isOpen && (
-        <div className="absolute top-16 left-0 right-0 z-50 bg-background/98 backdrop-blur-lg border-b border-border shadow-xl px-4 py-6 space-y-4 animate-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-16 left-0 right-0 z-50 bg-[var(--glass-strong)] backdrop-blur-xl border-b border-[var(--glass-border)] shadow-[var(--shadow)] px-4 py-6 space-y-4 animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
