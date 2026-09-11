@@ -25,6 +25,11 @@ export const MESSAGES: Dictionary = {
   },
   "portal.hero.ctaNews": { th: "ติดตามข่าวสารล่าสุด", en: "Explore Latest News" },
   "portal.hero.ctaFaculty": { th: "ทำเนียบคณาจารย์", en: "Faculty Directory" },
+  "portal.hero.inputPlaceholder": { th: "กรอกอีเมล หรือ ค้นหาหลักสูตร...", en: "Enter your email or search programs..." },
+  "portal.hero.inputButton": { th: "ดูหลักสูตร & สมัครเรียน", en: "Explore & Apply" },
+  "portal.hero.statEmployment": { th: "อัตราได้งานทำใน 1 ปี", en: "Graduate employment rate" },
+  "portal.hero.statStudents": { th: "นักศึกษาและศิษย์เก่า", en: "Active students & alumni" },
+  "portal.hero.ratingText": { th: "คะแนนความพึงพอใจการศึกษา", en: "Average student rating" },
 
   // Stats Section
   "portal.stats.departments": { th: "ภาควิชาและฝ่ายสนับสนุน", en: "Departments & Units" },
