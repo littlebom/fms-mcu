@@ -1,12 +1,24 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getT } from "@/i18n/server";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Newspaper, Users, BookOpen, FileDown, ArrowRight, Building2, Mail, Phone } from "lucide-react";
 import { MobileNav } from "./_components/mobile-nav";
+import { getTenantSettings, resolveDefaultTenantId } from "@/features/identity/server";
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   const t = await getT();
+
+  // ดึง logoUrl จาก tenant settings
+  let logoUrl: string | null = null;
+  try {
+    const tenantId = await resolveDefaultTenantId();
+    const settings = await getTenantSettings(tenantId);
+    logoUrl = settings.logoUrl ?? null;
+  } catch {
+    // fallback → icon เดิม
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -14,8 +26,19 @@ export default async function PortalLayout({ children }: { children: React.React
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
-              <GraduationCap className="h-6 w-6" />
+            <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 transition-transform overflow-hidden">
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt={t("portal.facultyName")}
+                  width={40}
+                  height={40}
+                  style={{ objectFit: "contain", width: "100%", height: "100%" }}
+                  unoptimized={logoUrl.startsWith("/")}
+                />
+              ) : (
+                <GraduationCap className="h-6 w-6" />
+              )}
             </div>
             <div>
               <div className="font-bold text-base tracking-tight text-foreground leading-tight">
@@ -94,8 +117,19 @@ export default async function PortalLayout({ children }: { children: React.React
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                <GraduationCap className="h-5 w-5" />
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary overflow-hidden">
+                {logoUrl ? (
+                  <Image
+                    src={logoUrl}
+                    alt={t("portal.facultyName")}
+                    width={32}
+                    height={32}
+                    style={{ objectFit: "contain", width: "100%", height: "100%" }}
+                    unoptimized={logoUrl.startsWith("/")}
+                  />
+                ) : (
+                  <GraduationCap className="h-5 w-5" />
+                )}
               </div>
               <span className="font-bold text-foreground">
                 {t("portal.facultyName")}
