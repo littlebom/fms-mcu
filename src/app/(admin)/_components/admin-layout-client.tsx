@@ -16,9 +16,11 @@ import { hasPermission, P } from "@/features/identity";
 interface AdminLayoutClientProps {
   children: React.ReactNode;
   logoUrl: string | null;
+  orgNameTh?: string | null;
+  orgNameEn?: string | null;
 }
 
-export function AdminLayoutClient({ children, logoUrl }: AdminLayoutClientProps) {
+export function AdminLayoutClient({ children, logoUrl, orgNameTh, orgNameEn }: AdminLayoutClientProps) {
   const pathname = usePathname();
   const t = useT();
   const locale = useLocale();
@@ -47,9 +49,12 @@ export function AdminLayoutClient({ children, logoUrl }: AdminLayoutClientProps)
     ...(hasPermission(ctx, P.settingsManage) ? [{ href: "/settings", label: t("nav.settings"), icon: <Settings className="h-4 w-4" /> }] : []),
   ];
 
+  const brandName = locale === "th" ? (orgNameTh || t("app.name")) : (orgNameEn || orgNameTh || t("app.name"));
+  const brandTagline = locale === "th" ? (orgNameEn || t("app.tagline")) : (orgNameTh || t("app.tagline"));
+
   return (
     <AdminShell
-      brandName={t("app.name")} brandTagline={t("app.tagline")} brandHref="/dashboard"
+      brandName={brandName} brandTagline={brandTagline} brandHref="/dashboard"
       brandLogoUrl={logoUrl}
       breadcrumb={breadcrumb} breadcrumbLabel={t("common.breadcrumb")}
       roleLabel={roles[0] ? localizedName(roles[0], locale) : null}

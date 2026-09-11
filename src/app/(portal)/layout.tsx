@@ -1,27 +1,28 @@
 import Link from "next/link";
-import { getT } from "@/i18n/server";
+import { getT, getLocale } from "@/i18n/server";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { GraduationCap, Newspaper, Users, BookOpen, FileDown, Building2, Mail, Phone, MapPin, Clock } from "lucide-react";
 import { MobileNav } from "./_components/mobile-nav";
 import { PortalAvatarMenu } from "./_components/portal-avatar-menu";
-import { getTenantSettings, resolveDefaultTenantId, auth } from "@/features/identity/server";
+import { resolveTenantSettings, auth } from "@/features/identity/server";
+
+export const dynamic = "force-dynamic";
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
-  const [t, session] = await Promise.all([
+  const [t, locale, session, settings] = await Promise.all([
     getT(),
+    getLocale(),
     auth().catch(() => null),
+    resolveTenantSettings(),
   ]);
 
-  // ดึง logoUrl จาก tenant settings
-  let logoUrl: string | null = null;
-  try {
-    const tenantId = await resolveDefaultTenantId();
-    const settings = await getTenantSettings(tenantId);
-    logoUrl = settings.logoUrl ?? null;
-  } catch {
-    // fallback → icon เดิม
-  }
+  const logoUrl = settings?.logoUrl ?? null;
+  const orgNameTh = settings?.nameTh ?? null;
+  const orgNameEn = settings?.nameEn ?? null;
+
+  const brandTitle = locale === "th" ? (orgNameTh || t("portal.facultyName")) : (orgNameEn || orgNameTh || t("portal.facultyName"));
+  const brandSub = locale === "th" ? (orgNameEn || t("portal.universityName")) : (orgNameTh || t("portal.universityName"));
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -35,7 +36,7 @@ export default async function PortalLayout({ children }: { children: React.React
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={logoUrl}
-                  alt={t("portal.facultyName")}
+                  alt={brandTitle}
                   style={{ maxHeight: "32px", maxWidth: "80px", objectFit: "contain", width: "auto" }}
                 />
               ) : (
@@ -46,8 +47,8 @@ export default async function PortalLayout({ children }: { children: React.React
               )}
             </i>
             <div className="t min-w-0">
-              <b>{t("portal.facultyName")}</b>
-              <span>{t("portal.universityName")}</span>
+              <b>{brandTitle}</b>
+              <span>{brandSub}</span>
             </div>
           </Link>
 
@@ -128,7 +129,7 @@ export default async function PortalLayout({ children }: { children: React.React
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={logoUrl}
-                      alt={t("portal.facultyName")}
+                      alt={brandTitle}
                       style={{ maxHeight: "32px", maxWidth: "80px", objectFit: "contain", width: "auto" }}
                     />
                   ) : (
@@ -137,10 +138,10 @@ export default async function PortalLayout({ children }: { children: React.React
                 </div>
                 <div className="min-w-0">
                   <div className="font-bold text-base text-[var(--ink-band-text)] leading-tight tracking-tight">
-                    {t("portal.facultyName")}
+                    {brandTitle}
                   </div>
                   <div className="text-xs text-[var(--ink-band-muted)]">
-                    {t("portal.universityName")}
+                    {brandSub}
                   </div>
                 </div>
               </div>
@@ -239,7 +240,7 @@ export default async function PortalLayout({ children }: { children: React.React
           {/* Bottom Bar */}
           <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--ink-band-muted)]">
             <div>
-              © 2026 {t("portal.facultyName")}. {t("portal.footer.copyright")}
+              © 2026 {brandTitle}. {t("portal.footer.copyright")}
             </div>
             <div className="flex items-center gap-4">
               <span>{t("portal.footer.privacy")}</span>

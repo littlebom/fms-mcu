@@ -1,0 +1,77 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-vibe_secure_db_pass_2026}
+      POSTGRES_DB: ums_prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ums_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fms-network
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: fms-migrate
+    restart: "no"
+    environment:
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-vibe_secure_db_pass_2026}@db:5432/ums_prod
+      SEED_ALLOW_PROD: "1"
+    command: sh -c "npx prisma migrate deploy && npx tsx prisma/seed.ts"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - fms-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fms-platform:production
+    container_name: fms-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-vibe_secure_db_pass_2026}@db:5432/ums_prod
+      AUTH_SECRET: ${AUTH_SECRET:-eW91ci1zZWN1cmUtMzItYnl0ZXMtYmFzZTY0LXNlY3JldA==}
+      AUTH_TRUST_HOST: "true"
+      APP_URL: ${APP_URL:-http://localhost:3000}
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - fms-network
+    deploy:
+      resources:
+        limits:
+          cpus: 2.0
+          memory: 2048M
+        reservations:
+          cpus: 0.5
+          memory: 512M
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  fms-network:
+    driver: bridge

@@ -1,16 +1,28 @@
-import { getTenantSettings, resolveDefaultTenantId } from "@/features/identity/server";
+import { resolveTenantSettings } from "@/features/identity/server";
 import { AdminLayoutClient } from "./_components/admin-layout-client";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  // ดึง logoUrl จาก DB ฝั่ง Server ก่อนส่งให้ Client Component
   let logoUrl: string | null = null;
+  let nameTh: string | null = null;
+  let nameEn: string | null = null;
   try {
-    const tenantId = await resolveDefaultTenantId();
-    const settings = await getTenantSettings(tenantId);
-    logoUrl = settings.logoUrl ?? null;
+    const settings = await resolveTenantSettings();
+    if (settings) {
+      logoUrl = settings.logoUrl ?? null;
+      nameTh = settings.nameTh;
+      nameEn = settings.nameEn;
+    }
   } catch {
-    // ถ้าดึงไม่ได้ (ยังไม่มี tenant / DB ไม่พร้อม) ใช้ค่า null → แสดง SVG icon เดิม
+    // fallback
   }
 
-  return <AdminLayoutClient logoUrl={logoUrl}>{children}</AdminLayoutClient>;
+  return (
+    <AdminLayoutClient
+      logoUrl={logoUrl}
+      orgNameTh={nameTh}
+      orgNameEn={nameEn}
+    >
+      {children}
+    </AdminLayoutClient>
+  );
 }

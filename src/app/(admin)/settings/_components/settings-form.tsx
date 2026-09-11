@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { LiyonCard, LiyonField, PalettePicker } from "@/shared/components/liyon";
+import { LiyonCard, LiyonField, LiyonSelect, LiyonSwitchRow, PalettePicker } from "@/shared/components/liyon";
 import { useT } from "@/shared/lib/i18n/client";
 import type { PaletteId } from "@/shared/lib/palette";
 import type { TenantSettings } from "@/features/identity";
-import { updateSettingsAction } from "@/features/identity/actions";
+import { updateSettingsAction, testSmtpAction } from "@/features/identity/actions";
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp", "image/svg+xml"];
@@ -141,18 +141,84 @@ function LogoUploader({ currentUrl, onUpload }: LogoUploaderProps) {
 export function SettingsForm({ initial }: { initial: TenantSettings }) {
   const t = useT();
   const router = useRouter();
-  const [form, setForm] = useState({ nameTh: initial.nameTh, nameEn: initial.nameEn, logoUrl: initial.logoUrl ?? "", palette: initial.palette as PaletteId });
+  const [form, setForm] = useState({
+    nameTh: initial.nameTh,
+    nameEn: initial.nameEn,
+    logoUrl: initial.logoUrl ?? "",
+    palette: initial.palette as PaletteId,
+    smtp: {
+      enabled: initial.smtp?.enabled ?? false,
+      host: initial.smtp?.host || "smtp.gmail.com",
+      port: initial.smtp?.port || 465,
+      secure: initial.smtp?.secure ?? true,
+      user: initial.smtp?.user || "",
+      pass: "",
+      fromName: initial.smtp?.fromName || "",
+      fromEmail: initial.smtp?.fromEmail || "",
+      hasSavedPass: initial.smtp?.hasSavedPass ?? false,
+    },
+  });
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [pending, start] = useTransition();
+
+  // Test SMTP state
+  const [testTo, setTestTo] = useState("");
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
 
   function save() {
     start(async () => {
       const r = await updateSettingsAction(form);
-      if (!r.ok) { setErrors(r.error.fieldErrors ?? {}); if (!r.error.fieldErrors) toast.error(t(`error.${r.error.code}`)); return; }
+      if (!r.ok) {
+        setErrors(r.error.fieldErrors ?? {});
+        if (!r.error.fieldErrors) toast.error(t(`error.${r.error.code}`));
+        return;
+      }
       setErrors({});
       toast.success(t("settings.saveOk"));
       router.refresh();
     });
+  }
+
+  async function handleTestSmtp() {
+    if (!testTo.trim()) {
+      toast.error(t("settings.smtpTestEmailRequired"));
+      return;
+    }
+    if (!form.smtp.pass && !form.smtp.hasSavedPass) {
+      toast.error(t("settings.smtpTestPassRequired"));
+      return;
+    }
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const res = await testSmtpAction({
+        host: form.smtp.host,
+        port: form.smtp.port,
+        secure: form.smtp.secure,
+        user: form.smtp.user,
+        pass: form.smtp.pass,
+        fromName: form.smtp.fromName,
+        fromEmail: form.smtp.fromEmail,
+        to: testTo.trim(),
+      });
+      if (res.ok) {
+        toast.success(t("settings.smtpTestSuccess"));
+        setTestResult({ success: true, message: t("settings.smtpTestSuccess") });
+      } else {
+        let msg = res.error.fieldErrors?._form?.[0] || res.error.fieldErrors?.pass?.[0] || t("settings.smtpTestFail");
+        if (msg.includes("535") || msg.includes("BadCredentials") || msg.includes("Username and Password not accepted")) {
+          msg = `${t("settings.smtpBadCredentialsHint")}\n\n[Google Error: ${msg}]`;
+        }
+        toast.error(t("settings.smtpTestFail"));
+        setTestResult({ success: false, message: msg });
+      }
+    } catch {
+      toast.error(t("settings.smtpTestFail"));
+      setTestResult({ success: false, message: t("settings.smtpTestFail") });
+    } finally {
+      setTesting(false);
+    }
   }
 
   return (
@@ -176,6 +242,168 @@ export function SettingsForm({ initial }: { initial: TenantSettings }) {
           <PalettePicker value={form.palette} onChange={(p) => setForm({ ...form, palette: p })} label={t("settings.paletteLabel")} />
           {form.palette === "coral" && <p className="warn" role="note">{t("settings.coralWarn")}</p>}
         </LiyonCard>
+
+        {/* Gmail SMTP Card */}
+        <LiyonCard>
+          <h2>{t("settings.smtpTitle")}</h2>
+          <p className="text-sm text-gray-500 mb-4">{t("settings.smtpDesc")}</p>
+
+          <LiyonSwitchRow
+            id="s-smtp-enabled"
+            checked={form.smtp.enabled}
+            onCheckedChange={(checked) => setForm({ ...form, smtp: { ...form.smtp, enabled: checked } })}
+            label={t("settings.smtpEnabled")}
+            description={t("settings.smtpEnabledDesc")}
+          />
+
+          <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/70 p-4 text-sm text-blue-900">
+            <h4 className="font-semibold mb-1 flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-blue-600 inline shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {t("settings.smtpHelpTitle")}
+            </h4>
+            <ul className="list-none space-y-1 text-xs text-blue-800 mt-2">
+              <li>{t("settings.smtpHelpStep1")}</li>
+              <li>
+                {t("settings.smtpHelpStep2")}{" "}
+                <a
+                  href="https://myaccount.google.com/apppasswords"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium underline hover:text-blue-950 inline-flex items-center gap-0.5"
+                >
+                  myaccount.google.com/apppasswords &rarr;
+                </a>
+              </li>
+              <li>{t("settings.smtpHelpStep3")}</li>
+            </ul>
+          </div>
+
+          <div className="fields mt-4">
+            <LiyonField label={t("settings.smtpHost")} htmlFor="s-smtp-host">
+              <input
+                id="s-smtp-host"
+                value={form.smtp.host}
+                onChange={(e) => setForm({ ...form, smtp: { ...form.smtp, host: e.target.value } })}
+                placeholder="smtp.gmail.com"
+              />
+            </LiyonField>
+
+            <LiyonField label={t("settings.smtpPort")} htmlFor="s-smtp-port">
+              <LiyonSelect
+                id="s-smtp-port"
+                value={form.smtp.port}
+                onChange={(e) => {
+                  const port = Number(e.target.value);
+                  setForm({
+                    ...form,
+                    smtp: {
+                      ...form.smtp,
+                      port,
+                      secure: port === 465,
+                    },
+                  });
+                }}
+              >
+                <option value={465}>{t("settings.smtpPortSsl")}</option>
+                <option value={587}>{t("settings.smtpPortTls")}</option>
+              </LiyonSelect>
+            </LiyonField>
+
+            <LiyonField
+              label={t("settings.smtpUser")}
+              htmlFor="s-smtp-user"
+              hint={t("settings.smtpUserHint")}
+              error={errors["smtp.user"]?.[0]}
+            >
+              <input
+                id="s-smtp-user"
+                type="email"
+                value={form.smtp.user}
+                onChange={(e) => setForm({ ...form, smtp: { ...form.smtp, user: e.target.value } })}
+                placeholder="example@gmail.com"
+              />
+            </LiyonField>
+
+            <LiyonField
+              label={t("settings.smtpPass")}
+              htmlFor="s-smtp-pass"
+              hint={form.smtp.hasSavedPass && !form.smtp.pass ? t("settings.smtpPassKeep") : t("settings.smtpPassHint")}
+              error={errors["smtp.pass"]?.[0]}
+            >
+              <input
+                id="s-smtp-pass"
+                type="password"
+                value={form.smtp.pass}
+                onChange={(e) => setForm({ ...form, smtp: { ...form.smtp, pass: e.target.value } })}
+                placeholder={form.smtp.hasSavedPass ? "••••••••••••••••" : "abcd efgh ijkl mnop"}
+                autoComplete="new-password"
+              />
+            </LiyonField>
+
+            <LiyonField
+              label={t("settings.smtpFromName")}
+              htmlFor="s-smtp-from-name"
+              hint={t("settings.smtpFromNameHint")}
+            >
+              <input
+                id="s-smtp-from-name"
+                value={form.smtp.fromName}
+                onChange={(e) => setForm({ ...form, smtp: { ...form.smtp, fromName: e.target.value } })}
+                placeholder="FMS Platform"
+              />
+            </LiyonField>
+
+            <LiyonField
+              label={t("settings.smtpFromEmail")}
+              htmlFor="s-smtp-from-email"
+              hint={t("settings.smtpFromEmailHint")}
+              error={errors["smtp.fromEmail"]?.[0]}
+            >
+              <input
+                id="s-smtp-from-email"
+                type="email"
+                value={form.smtp.fromEmail}
+                onChange={(e) => setForm({ ...form, smtp: { ...form.smtp, fromEmail: e.target.value } })}
+                placeholder={form.smtp.user || "example@gmail.com"}
+              />
+            </LiyonField>
+          </div>
+
+          <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50/80 p-4">
+            <h3 className="text-sm font-semibold text-gray-800">{t("settings.smtpTestTitle")}</h3>
+            <p className="text-xs text-gray-500 mb-3">{t("settings.smtpTestDesc")}</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="email"
+                className="flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                placeholder={t("settings.smtpTestEmail")}
+                value={testTo}
+                onChange={(e) => setTestTo(e.target.value)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleTestSmtp}
+                disabled={testing || !form.smtp.user}
+                className="whitespace-nowrap"
+              >
+                {testing ? t("settings.smtpTesting") : t("settings.smtpTestBtn")}
+              </Button>
+            </div>
+            {testResult && (
+              <div
+                className={`mt-3 rounded p-2.5 text-xs font-medium ${
+                  testResult.success ? "bg-green-50 text-green-800 border border-green-200" : "bg-red-50 text-red-800 border border-red-200"
+                }`}
+              >
+                {testResult.message}
+              </div>
+            )}
+          </div>
+        </LiyonCard>
+
         <div className="savebar"><Button type="button" onClick={save} disabled={pending}>{t("common.save")}</Button></div>
       </div>
     </>

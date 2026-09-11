@@ -5,31 +5,124 @@ import { errors } from "@/shared/lib/errors";
 import { writeAudit } from "../audit";
 import type { UpdateSettingsInput } from "../validations/settings";
 
-export interface TenantSettings { code: string; nameTh: string; nameEn: string; logoUrl: string | null; palette: PaletteId }
+export interface TenantSmtpSettings {
+  enabled: boolean;
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+  pass?: string;
+  fromName: string;
+  fromEmail: string;
+  hasSavedPass?: boolean;
+}
+
+export interface TenantSettings {
+  code: string;
+  nameTh: string;
+  nameEn: string;
+  logoUrl: string | null;
+  palette: PaletteId;
+  smtp?: TenantSmtpSettings;
+}
 
 async function readTenantSettings(tenantId: string, db: Db): Promise<TenantSettings> {
   const t = await db.tenant.findUnique({ where: { id: tenantId } });
   if (!t) throw errors.not_found();
-  const p = (t.settings as { palette?: unknown }).palette;
-  return { code: t.code, nameTh: t.nameTh, nameEn: t.nameEn, logoUrl: t.logoUrl, palette: isPalette(p) ? p : DEFAULT_PALETTE };
+  const s = (t.settings as { palette?: unknown; smtp?: { enabled?: boolean; host?: string; port?: number; secure?: boolean; user?: string; pass?: string; fromName?: string; fromEmail?: string } }) || {};
+  const p = s.palette;
+  const smtpRaw = s.smtp;
+  return {
+    code: t.code,
+    nameTh: t.nameTh,
+    nameEn: t.nameEn,
+    logoUrl: t.logoUrl,
+    palette: isPalette(p) ? p : DEFAULT_PALETTE,
+    smtp: {
+      enabled: Boolean(smtpRaw?.enabled),
+      host: smtpRaw?.host || "smtp.gmail.com",
+      port: Number(smtpRaw?.port) || 465,
+      secure: smtpRaw?.secure ?? true,
+      user: smtpRaw?.user || "",
+      pass: "",
+      fromName: smtpRaw?.fromName || "",
+      fromEmail: smtpRaw?.fromEmail || "",
+      hasSavedPass: Boolean(smtpRaw?.pass && smtpRaw.pass.length > 0),
+    },
+  };
 }
 
 export async function getTenantSettings(tenantId: string): Promise<TenantSettings> {
   return readTenantSettings(tenantId, prisma);
 }
 
-/** เก็บคีย์อื่น ๆ ใน settings JSON ไว้ทั้งหมด — merge เฉพาะ palette ที่เปลี่ยน ไม่ทับทั้งก้อน */
+export async function getTenantSmtpConfig(tenantId: string) {
+  const t = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { settings: true } });
+  const s = (t?.settings as { smtp?: { enabled?: boolean; host?: string; port?: number; secure?: boolean; user?: string; pass?: string; fromName?: string; fromEmail?: string } })?.smtp;
+  if (!s) return null;
+  return {
+    enabled: Boolean(s.enabled),
+    host: s.host || "smtp.gmail.com",
+    port: Number(s.port) || 465,
+    secure: s.secure ?? true,
+    user: s.user || "",
+    pass: s.pass || "",
+    fromName: s.fromName || "",
+    fromEmail: s.fromEmail || "",
+  };
+}
+
+/** เก็บคีย์อื่น ๆ ใน settings JSON ไว้ทั้งหมด — merge เฉพาะ palette และ smtp ที่เปลี่ยน ไม่ทับทั้งก้อน */
 export async function updateTenantSettings(input: { tenantId: string; actorId: string } & UpdateSettingsInput): Promise<void> {
   await prisma.$transaction(async (tx) => {
-    // อ่านผ่าน tx เดียวกัน ไม่ใช่ client กลาง — ไม่งั้นทรานแซกชันนี้กินคอนเนกชันจากพูลเพิ่มอีกเส้นเพื่ออ่าน
-    // ค่าเดิม และค่าที่อ่านได้ก็อยู่นอกสแนปช็อตของทรานแซกชัน (ค่า before ของ audit อาจไม่ตรงกับที่กำลังจะทับ)
+    // อ่านผ่าน tx เดียวกัน ไม่ใช่ client กลาง
     const before = await readTenantSettings(input.tenantId, tx);
     const t = await tx.tenant.findUniqueOrThrow({ where: { id: input.tenantId }, select: { settings: true } });
+    const currentSettings = (t.settings as { palette?: unknown; smtp?: { enabled?: boolean; host?: string; port?: number; secure?: boolean; user?: string; pass?: string; fromName?: string; fromEmail?: string } }) || {};
+
+    let newSmtp = currentSettings.smtp;
+    if (input.smtp) {
+      newSmtp = {
+        enabled: input.smtp.enabled,
+        host: input.smtp.host || "smtp.gmail.com",
+        port: input.smtp.port || 465,
+        secure: input.smtp.secure ?? true,
+        user: input.smtp.user?.trim() || "",
+        pass: input.smtp.pass && input.smtp.pass.trim() !== ""
+          ? (input.smtp.host.includes("gmail") ? input.smtp.pass.replace(/\s+/g, "") : input.smtp.pass.trim())
+          : (currentSettings.smtp?.pass || ""),
+        fromName: input.smtp.fromName?.trim() || "",
+        fromEmail: input.smtp.fromEmail?.trim() || input.smtp.user?.trim() || "",
+      };
+    }
+
+    const updatedSettings = {
+      ...currentSettings,
+      palette: input.palette,
+      smtp: newSmtp,
+    };
+
     await tx.tenant.update({
       where: { id: input.tenantId },
-      data: { nameTh: input.nameTh, nameEn: input.nameEn, logoUrl: input.logoUrl || null, settings: { ...(t.settings as object), palette: input.palette } },
+      data: {
+        nameTh: input.nameTh,
+        nameEn: input.nameEn,
+        logoUrl: input.logoUrl || null,
+        settings: updatedSettings as object,
+      },
     });
-    await writeAudit({ tenantId: input.tenantId, actorId: input.actorId, action: "tenant.settings_update", entity: "tenant", entityId: input.tenantId, before, after: input }, tx);
+
+    const auditBefore = { ...before, smtp: before.smtp ? { ...before.smtp, pass: "***" } : undefined };
+    const auditAfter = { ...input, smtp: input.smtp ? { ...input.smtp, pass: input.smtp.pass ? "***" : "(unchanged)" } : undefined };
+    await writeAudit({
+      tenantId: input.tenantId,
+      actorId: input.actorId,
+      action: "tenant.settings_update",
+      entity: "tenant",
+      entityId: input.tenantId,
+      before: auditBefore,
+      after: auditAfter,
+    }, tx);
   });
 }
 
@@ -69,4 +162,13 @@ export async function resolveDefaultTenantId(): Promise<string> {
   if (!tenant) throw errors.internal("No tenant configured");
   return tenant.id;
 }
+
+export const resolveTenantSettings = cache(async (): Promise<TenantSettings | null> => {
+  try {
+    const tenantId = (await sessionTenantId()) || (await prisma.tenant.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true } }))?.id;
+    return tenantId ? await getTenantSettings(tenantId) : null;
+  } catch {
+    return null;
+  }
+});
 

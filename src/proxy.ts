@@ -12,6 +12,7 @@ const PUBLIC_PREFIXES = [
   "/reset-password/",
   "/verify-email/",
   "/api/auth/",
+  "/api/health",
   "/_next/",
   "/favicon.ico",
   "/videos/",
