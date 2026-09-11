@@ -1,9 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getT } from "@/i18n/server";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { GraduationCap, Newspaper, Users, BookOpen, FileDown, Building2, Mail, Phone } from "lucide-react";
+import { GraduationCap, Newspaper, Users, BookOpen, FileDown, Building2, Mail, Phone, MapPin, Clock } from "lucide-react";
 import { MobileNav } from "./_components/mobile-nav";
 import { PortalAvatarMenu } from "./_components/portal-avatar-menu";
 import { getTenantSettings, resolveDefaultTenantId, auth } from "@/features/identity/server";
@@ -117,101 +116,139 @@ export default async function PortalLayout({ children }: { children: React.React
       {/* Main Content */}
       <main className="flex-1">{children}</main>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-muted/40 py-12 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-2 space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary overflow-hidden">
-                {logoUrl ? (
-                  <Image
-                    src={logoUrl}
-                    alt={t("portal.facultyName")}
-                    width={32}
-                    height={32}
-                    style={{ objectFit: "contain", width: "100%", height: "100%" }}
-                    unoptimized={logoUrl.startsWith("/")}
-                  />
-                ) : (
-                  <GraduationCap className="h-5 w-5" />
-                )}
+      {/* Liyon-style Ink-band Footer */}
+      <footer className="mt-24 bg-[var(--ink-band)] text-[var(--ink-band-text)] relative before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[1px] before:bg-[var(--edge-grad-h)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
+            {/* Col 1: Brand & About */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-[var(--r-md)] bg-[var(--brand)] text-[var(--on-brand)] flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                  {logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={logoUrl}
+                      alt={t("portal.facultyName")}
+                      style={{ maxHeight: "32px", maxWidth: "80px", objectFit: "contain", width: "auto" }}
+                    />
+                  ) : (
+                    <GraduationCap className="h-5 w-5" />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold text-base text-[var(--ink-band-text)] leading-tight tracking-tight">
+                    {t("portal.facultyName")}
+                  </div>
+                  <div className="text-xs text-[var(--ink-band-muted)]">
+                    {t("portal.universityName")}
+                  </div>
+                </div>
               </div>
-              <span className="font-bold text-foreground">
-                {t("portal.facultyName")}
-              </span>
-            </div>
-            <p className="text-sm text-muted-foreground max-w-md">
-              {t("portal.footer.about")}
-            </p>
-          </div>
 
-          <div className="space-y-3">
-            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-              {t("portal.footer.navigation")}
-            </h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link href="/" className="hover:text-foreground transition-colors">
-                  {t("portal.nav.home")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/programs" className="hover:text-foreground transition-colors">
-                  {t("portal.nav.programs")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/documents" className="hover:text-foreground transition-colors">
-                  {t("portal.nav.documents")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/facilities" className="hover:text-foreground transition-colors">
-                  {t("portal.nav.facilities")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/articles" className="hover:text-foreground transition-colors">
-                  {t("portal.nav.news")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/faculty" className="hover:text-foreground transition-colors">
-                  {t("portal.nav.faculty")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard" className="hover:text-foreground transition-colors">
-                  {t("portal.nav.adminConsole")}
-                </Link>
-              </li>
-            </ul>
-          </div>
+              <p className="text-sm text-[var(--ink-band-muted)] leading-relaxed max-w-sm">
+                {t("portal.footer.about")}
+              </p>
 
-          <div className="space-y-3">
-            <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-              {t("portal.footer.contact")}
-            </h4>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-start gap-2">
-                <Building2 className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                <span>{t("portal.footer.address")}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <span>{t("portal.footer.email")}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <span>{t("portal.footer.tel")}</span>
+              <div className="pt-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-[var(--ink-band-text)] border border-white/10">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Digital Innovation Campus</span>
+                </span>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground">
-          <div>© 2026 {t("portal.facultyName")}. {t("portal.footer.copyright")}</div>
-          <div className="mt-2 sm:mt-0">Powered by VibeCore Modular Monolith</div>
+            {/* Col 2: Academics */}
+            <div className="lg:col-span-2 space-y-3">
+              <h4 className="text-xs font-bold text-[var(--ink-band-muted)] uppercase tracking-wider">
+                {t("portal.footer.academics")}
+              </h4>
+              <ul className="space-y-2.5 text-sm text-[var(--ink-band-muted)]">
+                <li>
+                  <Link href="/programs" className="hover:text-[var(--ink-band-text)] transition-colors">
+                    {t("portal.nav.programs")}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/documents" className="hover:text-[var(--ink-band-text)] transition-colors">
+                    {t("portal.nav.documents")}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/" className="hover:text-[var(--ink-band-text)] transition-colors">
+                    {t("portal.nav.home")}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Col 3: Services */}
+            <div className="lg:col-span-2 space-y-3">
+              <h4 className="text-xs font-bold text-[var(--ink-band-muted)] uppercase tracking-wider">
+                {t("portal.footer.services")}
+              </h4>
+              <ul className="space-y-2.5 text-sm text-[var(--ink-band-muted)]">
+                <li>
+                  <Link href="/facilities" className="hover:text-[var(--ink-band-text)] transition-colors">
+                    {t("portal.nav.facilities")}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/articles" className="hover:text-[var(--ink-band-text)] transition-colors">
+                    {t("portal.nav.news")}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faculty" className="hover:text-[var(--ink-band-text)] transition-colors">
+                    {t("portal.nav.faculty")}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/dashboard" className="hover:text-[var(--ink-band-text)] transition-colors">
+                    {t("portal.nav.adminConsole")}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Col 4: Contact */}
+            <div className="lg:col-span-3 space-y-3">
+              <h4 className="text-xs font-bold text-[var(--ink-band-muted)] uppercase tracking-wider">
+                {t("portal.footer.contact")}
+              </h4>
+              <div className="space-y-2.5 text-sm text-[var(--ink-band-muted)]">
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="h-4 w-4 shrink-0 text-[var(--brand-light)] mt-0.5" />
+                  <span className="leading-snug">{t("portal.footer.address")}</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Phone className="h-4 w-4 shrink-0 text-[var(--brand-light)]" />
+                  <span>{t("portal.footer.tel")}</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Mail className="h-4 w-4 shrink-0 text-[var(--brand-light)]" />
+                  <span>{t("portal.footer.email")}</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Clock className="h-4 w-4 shrink-0 text-[var(--brand-light)]" />
+                  <span>{t("portal.footer.hours")}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--ink-band-muted)]">
+            <div>
+              © 2026 {t("portal.facultyName")}. {t("portal.footer.copyright")}
+            </div>
+            <div className="flex items-center gap-4">
+              <span>{t("portal.footer.privacy")}</span>
+              <span>•</span>
+              <span>{t("portal.footer.terms")}</span>
+              <span>•</span>
+              <span className="text-[var(--ink-band-text)]">Powered by VibeCore</span>
+            </div>
+          </div>
         </div>
       </footer>
     </div>

@@ -89,6 +89,8 @@ export const MESSAGES: Dictionary = {
     en: "Dedicated to nurturing excellence in Artificial Intelligence, Software Engineering, and Digital Innovation through world-class education and impact research.",
   },
   "portal.footer.navigation": { th: "การนำทาง", en: "Navigation" },
+  "portal.footer.academics": { th: "หลักสูตรและการศึกษา", en: "Academics" },
+  "portal.footer.services": { th: "บริการและวิทยาเขต", en: "Campus & Services" },
   "portal.footer.contact": { th: "ติดต่อคณะ", en: "Contact Us" },
   "portal.footer.address": {
     th: "อาคาร 3 ชั้น 2 คณะวิทยาการจัดการและสารสนเทศศาสตร์ เลขที่ 123 ถนนวิทยานวัตกรรม แขวงมหาวิทยาลัย เขตดิจิทัล กรุงเทพฯ 10400",
@@ -98,7 +100,9 @@ export const MESSAGES: Dictionary = {
   "portal.footer.email": { th: "อีเมล: contact@fms.ac.th", en: "Email: contact@fms.ac.th" },
   "portal.footer.hours": { th: "เวลาทำการ: จันทร์ - ศุกร์ 08:30 - 16:30 น.", en: "Office Hours: Mon - Fri 08:30 - 16:30" },
   "portal.footer.copyright": {
-    th: "คณะวิทยาการจัดการและสารสนเทศศาสตร์. สงวนลิขสิทธิ์ทุกประการ.",
-    en: "Faculty of Management & Information Sciences. All rights reserved.",
+    th: "สงวนลิขสิทธิ์ทุกประการ",
+    en: "All rights reserved.",
   },
+  "portal.footer.privacy": { th: "นโยบายความเป็นส่วนตัว", en: "Privacy Policy" },
+  "portal.footer.terms": { th: "ข้อกำหนดการใช้งาน", en: "Terms of Service" },
 };
