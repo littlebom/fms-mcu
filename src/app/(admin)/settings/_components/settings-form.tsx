@@ -54,7 +54,6 @@ function LogoUploader({ currentUrl, onUpload }: LogoUploaderProps) {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) void processFile(file);
-    // reset เพื่อให้เลือกไฟล์เดิมซ้ำได้
     e.target.value = "";
   }
 
@@ -66,40 +65,63 @@ function LogoUploader({ currentUrl, onUpload }: LogoUploaderProps) {
   }
 
   return (
-    <div className="logo-uploader">
-      {/* Preview */}
+    <div className="flex flex-col gap-3">
+      {/* Preview โลโก้ปัจจุบัน */}
       {currentUrl && (
-        <div className="logo-preview" aria-label={t("settings.logoPreview")}>
+        <div className="flex items-center gap-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-3">
           <Image
             src={currentUrl}
             alt={t("settings.logoPreview")}
             width={120}
             height={60}
-            style={{ objectFit: "contain", width: "auto", height: "60px" }}
+            style={{ objectFit: "contain", maxWidth: "120px", height: "60px", width: "auto" }}
             unoptimized={currentUrl.startsWith("/")}
           />
+          <span className="text-sm text-gray-500">{t("settings.logoPreview")}</span>
         </div>
       )}
 
-      {/* Drop zone */}
+      {/* Drop zone + Browse button */}
       <div
-        className={`logo-dropzone${dragOver ? " drag-over" : ""}`}
         role="button"
         tabIndex={0}
         aria-label={t("settings.logoUpload")}
-        onClick={() => fileRef.current?.click()}
-        onKeyDown={(e) => e.key === "Enter" && fileRef.current?.click()}
+        onClick={() => !uploading && fileRef.current?.click()}
+        onKeyDown={(e) => e.key === "Enter" && !uploading && fileRef.current?.click()}
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
+        className={[
+          "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-6 py-6 text-center transition-colors",
+          dragOver
+            ? "border-blue-400 bg-blue-50"
+            : "border-gray-300 bg-white hover:border-gray-400 hover:bg-gray-50",
+          uploading ? "pointer-events-none opacity-60" : "",
+        ].join(" ")}
       >
         {uploading ? (
-          <span className="upload-loading">{t("settings.uploading")}</span>
+          <span className="text-sm text-gray-500">{t("settings.uploading")}</span>
         ) : (
           <>
-            <span className="upload-icon" aria-hidden="true">📁</span>
-            <span className="upload-label">{t("settings.logoUpload")}</span>
-            <span className="upload-hint">{t("settings.logoUploadHint")}</span>
+            {/* Upload icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-10 w-10 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+            </svg>
+            <div>
+              <span className="font-medium text-blue-600 underline underline-offset-2">
+                {t("settings.logoUpload")}
+              </span>
+              <span className="ml-1 text-sm text-gray-500">หรือลากมาวางที่นี่</span>
+            </div>
+            <p className="text-xs text-gray-400">{t("settings.logoUploadHint")}</p>
           </>
         )}
       </div>
@@ -108,7 +130,7 @@ function LogoUploader({ currentUrl, onUpload }: LogoUploaderProps) {
         ref={fileRef}
         type="file"
         accept="image/png,image/jpeg,image/webp,image/svg+xml"
-        style={{ display: "none" }}
+        className="hidden"
         onChange={handleFileChange}
         aria-hidden="true"
       />
