@@ -1,6 +1,7 @@
 import { prisma } from "@/shared/lib/infra/prisma";
 import type { Prisma } from "@/generated/prisma";
 import { writeAudit } from "@/features/identity/server";
+import { errors } from "@/shared/lib/errors";
 import type { CreateStaffProfileInput, UpdateStaffProfileInput, DepartmentInput } from "./validations";
 
 export interface DepartmentDto {
@@ -253,7 +254,7 @@ export async function updateStaffProfile(
     const existing = await tx.staffProfile.findFirst({
       where: { id: input.id, tenantId },
     });
-    if (!existing) throw new Error("Staff profile not found");
+    if (!existing) throw errors.not_found("Staff profile not found");
 
     const profile = await tx.staffProfile.update({
       where: { id: input.id, tenantId },

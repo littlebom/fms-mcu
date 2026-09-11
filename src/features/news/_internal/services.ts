@@ -1,6 +1,7 @@
 import { prisma } from "@/shared/lib/infra/prisma";
 import type { Prisma } from "@/generated/prisma";
 import { writeAudit } from "@/features/identity/server";
+import { errors } from "@/shared/lib/errors";
 import type { CreateArticleInput, UpdateArticleInput, ArticleCategoryInput } from "./validations";
 
 export interface ArticleCategoryDto {
@@ -340,7 +341,7 @@ export async function updateArticle(
     const existing = await tx.article.findFirst({
       where: { id: input.id, tenantId },
     });
-    if (!existing) throw new Error("Article not found");
+    if (!existing) throw errors.not_found("Article not found");
 
     let publishedAt = existing.publishedAt;
     if (input.status === "PUBLISHED" && !publishedAt) {

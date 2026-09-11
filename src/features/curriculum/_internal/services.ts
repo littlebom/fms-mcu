@@ -1,6 +1,7 @@
 import { prisma } from "@/shared/lib/infra/prisma";
 import type { Prisma, DegreeLevel, StudyType } from "@/generated/prisma";
 import { writeAudit } from "@/features/identity/server";
+import { errors } from "@/shared/lib/errors";
 import type { CreateProgramInput, UpdateProgramInput } from "./validations";
 
 export interface ProgramDto {
@@ -317,7 +318,7 @@ export async function updateProgram(
     const existing = await tx.academicProgram.findFirst({
       where: { id: input.id, tenantId },
     });
-    if (!existing) throw new Error("Academic program not found");
+    if (!existing) throw errors.not_found("Academic program not found");
 
     const program = await tx.academicProgram.update({
       where: { id: input.id, tenantId },

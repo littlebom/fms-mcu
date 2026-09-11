@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { Plus, Edit2, Trash2, Newspaper, AlertCircle, Search, Pin, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useT, useLocale } from "@/shared/lib/i18n/client";
@@ -184,9 +185,12 @@ export function NewsClient({ initialArticles, categories, canWrite, canPublish, 
       render: (row) => (
         <div className="flex items-center gap-3">
           {row.coverImageUrl ? (
-            <img
+            <Image
               src={row.coverImageUrl}
-              alt=""
+              alt={row.titleTh || "Article cover"}
+              width={64}
+              height={48}
+              unoptimized
               className="h-12 w-16 rounded object-cover border border-border shrink-0"
             />
           ) : (

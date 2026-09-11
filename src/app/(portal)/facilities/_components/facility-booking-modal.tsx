@@ -15,13 +15,13 @@ import { submitReservationAction } from "@/features/facilities/actions";
 
 interface Props {
   facility: FacilityDto | null;
-  tenantId: string;
+  tenantId?: string;
   locale: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function FacilityBookingModal({ facility, tenantId, locale, open, onOpenChange }: Props) {
+export function FacilityBookingModal({ facility, locale, open, onOpenChange }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const [reservedByName, setReservedByName] = useState("");
@@ -56,7 +56,7 @@ export function FacilityBookingModal({ facility, tenantId, locale, open, onOpenC
         return;
       }
 
-      const res = await submitReservationAction(tenantId, {
+      const res = await submitReservationAction({
         facilityId: facility.id,
         reservedByName: reservedByName.trim(),
         reservedByEmail: reservedByEmail.trim(),

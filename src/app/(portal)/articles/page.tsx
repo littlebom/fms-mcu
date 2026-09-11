@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getLocale } from "@/shared/lib/i18n/server";
 import { formatDate } from "@/shared/lib/format";
 import { resolveDefaultTenantId } from "@/features/identity/server";
@@ -80,10 +81,12 @@ export default async function ArticlesPortalPage({
             >
               <div className="relative h-52 w-full overflow-hidden bg-muted">
                 {item.coverImageUrl ? (
-                  <img
+                  <Image
                     src={item.coverImageUrl}
-                    alt=""
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    alt={locale === "th" ? item.titleTh : item.titleEn}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center bg-muted">

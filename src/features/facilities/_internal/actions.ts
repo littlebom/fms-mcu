@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { runAction, type ActionResult } from "@/shared/lib/result";
 import { getLocale } from "@/shared/lib/i18n/server";
 import { zodErrorMap } from "@/shared/lib/i18n/zod-locale";
-import { requirePermission } from "@/features/identity/server";
+import { requirePermission, resolveDefaultTenantId } from "@/features/identity/server";
 import type { FacilityType, ReservationStatus } from "@/generated/prisma";
 import { FACILITY_P } from "../permissions";
 import {
@@ -75,10 +75,10 @@ export async function getReservationsAction(options?: {
 }
 
 export async function submitReservationAction(
-  tenantId: string,
   input: unknown
 ): Promise<ActionResult<ReservationDto>> {
   return runAction(async () => {
+    const tenantId = await resolveDefaultTenantId();
     const parsed = createReservationSchema.parse(input, { error: zodErrorMap(await getLocale()) });
     const result = await createReservation(tenantId, parsed);
     revalidatePath("/facilities");

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getLocale } from "@/shared/lib/i18n/server";
 import { formatDate } from "@/shared/lib/format";
@@ -61,11 +62,14 @@ export default async function ArticleDetailPage({
         </div>
 
         {article.coverImageUrl && (
-          <div className="rounded-3xl overflow-hidden border border-border shadow-md max-h-[500px]">
-            <img
+          <div className="relative rounded-3xl overflow-hidden border border-border shadow-md h-[360px] sm:h-[480px]">
+            <Image
               src={article.coverImageUrl}
-              alt=""
-              className="w-full h-full object-cover"
+              alt={locale === "th" ? article.titleTh : article.titleEn}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 896px"
+              priority
             />
           </div>
         )}

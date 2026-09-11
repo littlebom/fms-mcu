@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { Plus, Edit2, Trash2, UserCheck, AlertCircle, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useT, useLocale } from "@/shared/lib/i18n/client";
@@ -182,9 +183,12 @@ export function StaffClient({ initialStaff, departments, canManage }: Props) {
       header: t("staff.nameTh"),
       render: (row) => (
         <div className="flex items-center gap-3">
-          <img
+          <Image
             src={row.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop"}
-            alt=""
+            alt={row.firstNameTh || "Staff avatar"}
+            width={40}
+            height={40}
+            unoptimized
             className="h-10 w-10 rounded-full object-cover border border-border"
           />
           <div>

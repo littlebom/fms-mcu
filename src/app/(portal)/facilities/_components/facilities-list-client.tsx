@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Users, MapPin, Sparkles, Calendar, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { FacilityDto } from "@/features/facilities";
@@ -41,10 +42,12 @@ export function FacilitiesListClient({ facilities, tenantId, locale }: Props) {
             >
               {fac.imageUrl && (
                 <div className="h-48 w-full overflow-hidden bg-muted relative">
-                  <img
+                  <Image
                     src={fac.imageUrl}
-                    alt=""
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    alt={locale === "th" ? fac.nameTh : fac.nameEn}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   <div className="absolute top-3 right-3">
                     <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-background/90 backdrop-blur-md text-primary border border-border/80 shadow-sm">

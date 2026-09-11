@@ -521,7 +521,7 @@ async function main() {
     },
   });
 
-  const labAi = await prisma.facility.upsert({
+  await prisma.facility.upsert({
     where: { tenantId_code: { tenantId: core.tenantId, code: "lab-ai-1" } },
     update: {},
     create: {
@@ -538,7 +538,7 @@ async function main() {
     },
   });
 
-  const auditorium = await prisma.facility.upsert({
+  await prisma.facility.upsert({
     where: { tenantId_code: { tenantId: core.tenantId, code: "auditorium-main" } },
     update: {},
     create: {
@@ -555,7 +555,7 @@ async function main() {
     },
   });
 
-  const van01 = await prisma.facility.upsert({
+  await prisma.facility.upsert({
     where: { tenantId_code: { tenantId: core.tenantId, code: "van-01" } },
     update: {},
     create: {

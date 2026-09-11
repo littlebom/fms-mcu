@@ -1,6 +1,7 @@
 import { prisma } from "@/shared/lib/infra/prisma";
 import type { Prisma, FacilityType, ReservationStatus } from "@/generated/prisma";
 import { writeAudit } from "@/features/identity/server";
+import { errors } from "@/shared/lib/errors";
 import type {
   CreateFacilityInput,
   UpdateFacilityInput,
@@ -214,7 +215,7 @@ export async function updateFacility(
     const existing = await tx.facility.findFirst({
       where: { id: input.id, tenantId },
     });
-    if (!existing) throw new Error("Facility not found");
+    if (!existing) throw errors.not_found("Facility not found");
 
     const facility = await tx.facility.update({
       where: { id: input.id, tenantId },
@@ -344,7 +345,7 @@ export async function createReservation(
     const facility = await tx.facility.findFirst({
       where: { id: input.facilityId, tenantId, isActive: true },
     });
-    if (!facility) throw new Error("Selected facility is not available");
+    if (!facility) throw errors.not_found("Selected facility is not available");
 
     // Check overlap with existing approved reservations
     const overlap = await tx.reservation.findFirst({
@@ -358,7 +359,7 @@ export async function createReservation(
     });
 
     if (overlap) {
-      throw new Error("สถานที่นี้ถูกจองและอนุมัติแล้วในช่วงเวลาดังกล่าว กรุณาเลือกช่วงเวลาอื่น");
+      throw errors.conflict("สถานที่นี้ถูกจองและอนุมัติแล้วในช่วงเวลาดังกล่าว กรุณาเลือกช่วงเวลาอื่น");
     }
 
     const reservation = await tx.reservation.create({
@@ -431,7 +432,7 @@ export async function reviewReservation(
     const existing = await tx.reservation.findFirst({
       where: { id: input.id, tenantId },
     });
-    if (!existing) throw new Error("Reservation not found");
+    if (!existing) throw errors.not_found("Reservation not found");
 
     if (input.status === "APPROVED") {
       // Check overlap
@@ -447,7 +448,7 @@ export async function reviewReservation(
       });
 
       if (overlap) {
-        throw new Error("ไม่สามารถอนุมัติได้เนื่องจากมีรายการอนุมัติอื่นซ้อนทับช่วงเวลานี้แล้ว");
+        throw errors.conflict("ไม่สามารถอนุมัติได้เนื่องจากมีรายการอนุมัติอื่นซ้อนทับช่วงเวลานี้แล้ว");
       }
     }
 

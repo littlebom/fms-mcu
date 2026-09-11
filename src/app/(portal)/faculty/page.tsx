@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getLocale } from "@/shared/lib/i18n/server";
 import { resolveDefaultTenantId } from "@/features/identity/server";
 import { listStaffProfiles, listDepartments } from "@/features/staff/server";
@@ -78,12 +79,18 @@ export default async function FacultyPortalPage({
             >
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <img
+                  <Image
                     src={
                       member.avatarUrl ||
                       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop"
                     }
-                    alt=""
+                    alt={
+                      locale === "th"
+                        ? `${member.prefixTh} ${member.firstNameTh} ${member.lastNameTh}`
+                        : `${member.prefixEn} ${member.firstNameEn} ${member.lastNameEn}`
+                    }
+                    width={64}
+                    height={64}
                     className="h-16 w-16 rounded-2xl object-cover border border-border/80 shadow-sm shrink-0"
                   />
                   <div className="space-y-1">

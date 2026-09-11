@@ -66,7 +66,7 @@ export const resolvePalette = cache(async (): Promise<PaletteId> => {
 
 export async function resolveDefaultTenantId(): Promise<string> {
   const tenant = await prisma.tenant.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true } });
-  if (!tenant) throw new Error("No tenant configured");
+  if (!tenant) throw errors.internal("No tenant configured");
   return tenant.id;
 }
 

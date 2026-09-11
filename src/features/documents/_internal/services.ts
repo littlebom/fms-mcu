@@ -1,6 +1,7 @@
 import { prisma } from "@/shared/lib/infra/prisma";
 import type { Prisma, DocumentTarget } from "@/generated/prisma";
 import { writeAudit } from "@/features/identity/server";
+import { errors } from "@/shared/lib/errors";
 import type { CreateDocumentInput, UpdateDocumentInput } from "./validations";
 
 export interface DocumentCategoryDto {
@@ -226,7 +227,7 @@ export async function updateDocument(
     const existing = await tx.documentItem.findFirst({
       where: { id: input.id, tenantId },
     });
-    if (!existing) throw new Error("Document not found");
+    if (!existing) throw errors.not_found("Document not found");
 
     const doc = await tx.documentItem.update({
       where: { id: input.id, tenantId },
