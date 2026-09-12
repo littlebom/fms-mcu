@@ -128,7 +128,7 @@ export default async function DocumentsPortalPage({
 
       {/* Documents Grid / Table */}
       {documents.length === 0 ? (
-        <div className="text-center py-20 bg-card rounded-2xl border border-border/80">
+        <div className="liyon-card text-center py-20 rounded-2xl">
           <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-40" />
           <h3 className="text-lg font-bold text-foreground">
             {locale === "th" ? "ไม่พบเอกสารในหมวดหมู่นี้" : "No documents found in this category"}
@@ -146,7 +146,7 @@ export default async function DocumentsPortalPage({
             return (
               <div
                 key={doc.id}
-                className="group rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 hover:border-primary/40"
+                className="liyon-card liyon-card-hover group rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">

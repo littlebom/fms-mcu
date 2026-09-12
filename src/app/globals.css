@@ -69,3 +69,260 @@
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background text-foreground; }
 }
+
+/* ═══════ Liyon Theme Card Treatment (Portal & App) ═══════ */
+:root {
+  --card-base: color-mix(in srgb, var(--bg-base) 35%, #fff);
+}
+[data-palette="coral"] {
+  --card-base: color-mix(in srgb, var(--bg-base) 18%, #fff);
+}
+[data-theme="dark"], .dark {
+  --card-base: var(--glass-strong);
+}
+
+.liyon-card {
+  position: relative;
+  background:
+    linear-gradient(118deg, var(--half-light) 0 50%, var(--half-shade) 50% 100%),
+    var(--card-base, var(--glass-strong));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+
+@supports ((mask-composite:exclude) or (-webkit-mask-composite:xor)){
+  .liyon-card {
+    border: 0;
+  }
+  .liyon-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--edge-grad);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+}
+
+.liyon-card-sub {
+  background: var(--panel);
+  border: 1px solid var(--glass-border);
+}
+@supports ((mask-composite:exclude) or (-webkit-mask-composite:xor)){
+  .liyon-card-sub::after {
+    display: none;
+  }
+}
+
+.liyon-card-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.liyon-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.1), 0 4px 10px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* ═══════ Liyon Home Hero & 3D Orbit (Authentic Liyon Theme) ═══════ */
+.hero-bleed {
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+.hero-bleed::after {
+  border-left: 0;
+}
+.hero {
+  max-width: min(1440px, 100% - 32px);
+  margin: 0 auto;
+  padding: 48px var(--gutter, 24px) 64px;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  align-items: center;
+}
+.eyebrow {
+  font-family: var(--font-inter, "Inter"), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: var(--brand-ink);
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: clamp(2rem, 3.5vw, 3.1rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+.hero h1 .light {
+  color: var(--text-2);
+  font-weight: 600;
+}
+.hero h1 .ai {
+  color: var(--brand-ink);
+}
+.hero .lede {
+  margin-top: 20px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.55;
+}
+.hero p.sub {
+  margin-top: 10px;
+  color: var(--text-2);
+  max-width: 48ch;
+  line-height: 1.7;
+}
+.cta-row {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.hero-stats {
+  margin-top: 36px;
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.hstat {
+  display: grid;
+  gap: 2px;
+}
+.hstat b {
+  font-size: 1.5rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.hstat span {
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+.hero-vis {
+  position: relative;
+  display: grid;
+  justify-items: end;
+  align-content: center;
+  gap: 12px;
+  min-height: 320px;
+}
+.orbit {
+  width: 100%;
+  max-width: 720px;
+  aspect-ratio: 1.28;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+  color: var(--text);
+}
+.orbit.dragging {
+  cursor: grabbing;
+}
+.orbit-cap {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: clamp(2rem, 3.5vw, 3.1rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  color: var(--brand);
+  opacity: 0.12;
+}
+
+@media (max-width: 1020px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .hero-vis {
+    justify-items: stretch;
+    min-height: 0;
+  }
+  .orbit {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 1.2;
+  }
+}
+@media (max-width: 680px) {
+  .hero {
+    max-width: calc(100% - 24px);
+    padding: 32px 16px 48px;
+  }
+  .cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .cta-row .btn-primary,
+  .cta-row .btn-ghost {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
+}
+
+/* ═══════════ Liyon Portal Navbar & Main Menu ═══════════ */
+.portal-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 64px;
+  overflow: visible;
+}
+.portal-nav .brand-blk {
+  flex: 1 1 0;
+  min-width: max-content;
+}
+.portal-main-menu {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.92rem;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.portal-main-menu li a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: var(--r-ctl);
+  color: var(--text-2);
+  font-weight: 500;
+  transition: color 0.16s, background-color 0.16s;
+  text-decoration: none;
+}
+.portal-main-menu li a:hover {
+  color: var(--text);
+  background-color: var(--glass-strong);
+}
+.portal-main-menu li.on a {
+  color: var(--brand-ink);
+  background-color: var(--glass-strong);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--glass-border);
+}
+.portal-nav .portal-right {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+

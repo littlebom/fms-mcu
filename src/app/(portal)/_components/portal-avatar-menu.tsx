@@ -4,7 +4,6 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 import { LayoutDashboard, User, LogOut, LogIn } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface PortalAvatarMenuProps {
   user: {
@@ -27,15 +26,9 @@ export function PortalAvatarMenu({
 }: PortalAvatarMenuProps) {
   if (!user) {
     return (
-      <Link href="/dashboard" className="hidden sm:inline-flex">
-        <Button
-          size="sm"
-          variant="outline"
-          className="items-center gap-1.5 text-xs h-9 rounded-[var(--r-ctl)] border-[var(--glass-border)] bg-[var(--glass)] hover:bg-[var(--glass-strong)] text-[var(--text)] transition-all"
-        >
-          <LogIn className="h-3.5 w-3.5" />
-          <span>{adminConsoleLabel || signInLabel}</span>
-        </Button>
+      <Link href="/dashboard" className="login-btn hidden sm:inline-flex">
+        <LogIn className="h-4 w-4" />
+        <span>{signInLabel}</span>
       </Link>
     );
   }

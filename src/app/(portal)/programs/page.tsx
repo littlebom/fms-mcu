@@ -127,7 +127,7 @@ export default async function ProgramsPortalPage({
 
       {/* Programs Cards Grid */}
       {programs.length === 0 ? (
-        <div className="text-center py-20 bg-card rounded-2xl border border-border/80">
+        <div className="liyon-card text-center py-20 rounded-2xl">
           <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-40" />
           <h3 className="text-lg font-bold text-foreground">
             {locale === "th" ? "ไม่พบข้อมูลหลักสูตรในหมวดหมู่นี้" : "No programs found in this category"}
@@ -157,7 +157,7 @@ export default async function ProgramsPortalPage({
             return (
               <div
                 key={prog.id}
-                className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 hover:border-primary/40"
+                className="liyon-card liyon-card-hover group rounded-2xl overflow-hidden flex flex-col justify-between"
               >
                 {/* Card Top / Image / Header */}
                 <div className="p-6 sm:p-8 space-y-5">
@@ -204,7 +204,7 @@ export default async function ProgramsPortalPage({
                   </p>
 
                   {/* Key Highlights Metrics */}
-                  <div className="grid grid-cols-3 gap-3 py-3 px-4 rounded-xl bg-muted/50 border border-border/60 text-xs">
+                  <div className="liyon-card-sub grid grid-cols-3 gap-3 py-3 px-4 rounded-xl text-xs">
                     <div className="space-y-0.5">
                       <div className="text-muted-foreground flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5 text-primary" />
@@ -263,7 +263,7 @@ export default async function ProgramsPortalPage({
                 </div>
 
                 {/* Card Bottom / Footer */}
-                <div className="px-6 py-4 bg-muted/30 border-t border-border/60 flex items-center justify-between text-xs">
+                <div className="px-6 py-4 bg-muted/20 border-t border-border/60 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-1.5 text-muted-foreground">
                     <Building className="h-3.5 w-3.5 text-primary" />
                     <span>{locale === "th" ? prog.departmentNameTh : prog.departmentNameEn}</span>

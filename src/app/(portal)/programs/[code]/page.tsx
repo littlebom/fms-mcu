@@ -61,7 +61,7 @@ export default async function ProgramDetailPage({
       </div>
 
       {/* Hero Header Card */}
-      <div className="rounded-3xl border border-border bg-card p-6 sm:p-10 shadow-sm space-y-6 relative overflow-hidden">
+      <div className="liyon-card rounded-3xl p-6 sm:p-10 space-y-6 relative overflow-hidden">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -119,7 +119,7 @@ export default async function ProgramDetailPage({
         <div className="lg:col-span-8 space-y-8">
           {/* Key Metric Cards */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="p-5 rounded-2xl border border-border bg-card shadow-sm space-y-1 text-center sm:text-left">
+            <div className="liyon-card p-5 rounded-2xl space-y-1 text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-muted-foreground font-medium">
                 <Clock className="h-4 w-4 text-primary" />
                 <span>{locale === "th" ? "ระยะเวลาศึกษา" : "Duration"}</span>
@@ -129,7 +129,7 @@ export default async function ProgramDetailPage({
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl border border-border bg-card shadow-sm space-y-1 text-center sm:text-left">
+            <div className="liyon-card p-5 rounded-2xl space-y-1 text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-muted-foreground font-medium">
                 <BookOpen className="h-4 w-4 text-primary" />
                 <span>{locale === "th" ? "จำนวนหน่วยกิตรวม" : "Total Credits"}</span>
@@ -139,7 +139,7 @@ export default async function ProgramDetailPage({
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl border border-border bg-card shadow-sm space-y-1 text-center sm:text-left">
+            <div className="liyon-card p-5 rounded-2xl space-y-1 text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-muted-foreground font-medium">
                 <Coins className="h-4 w-4 text-primary" />
                 <span>{locale === "th" ? "ค่าธรรมเนียมการศึกษา" : "Tuition Fee"}</span>
@@ -152,7 +152,7 @@ export default async function ProgramDetailPage({
 
           {/* Philosophy Section */}
           {(program.philosophyTh || program.philosophyEn) && (
-            <div className="p-6 sm:p-8 rounded-2xl border border-border bg-card shadow-sm space-y-4">
+            <div className="liyon-card p-6 sm:p-8 rounded-2xl space-y-4">
               <div className="flex items-center gap-2 text-lg font-bold text-foreground">
                 <div className="p-2 rounded-lg bg-primary/10 text-primary">
                   <Compass className="h-5 w-5" />
@@ -167,7 +167,7 @@ export default async function ProgramDetailPage({
 
           {/* Description Section */}
           {(program.descriptionTh || program.descriptionEn) && (
-            <div className="p-6 sm:p-8 rounded-2xl border border-border bg-card shadow-sm space-y-4">
+            <div className="liyon-card p-6 sm:p-8 rounded-2xl space-y-4">
               <div className="flex items-center gap-2 text-lg font-bold text-foreground">
                 <div className="p-2 rounded-lg bg-primary/10 text-primary">
                   <FileText className="h-5 w-5" />
@@ -182,7 +182,7 @@ export default async function ProgramDetailPage({
 
           {/* Career Opportunities */}
           {program.careerPaths.length > 0 && (
-            <div className="p-6 sm:p-8 rounded-2xl border border-border bg-card shadow-sm space-y-4">
+            <div className="liyon-card p-6 sm:p-8 rounded-2xl space-y-4">
               <div className="flex items-center gap-2 text-lg font-bold text-foreground">
                 <div className="p-2 rounded-lg bg-primary/10 text-primary">
                   <Award className="h-5 w-5" />
@@ -193,7 +193,7 @@ export default async function ProgramDetailPage({
                 {program.careerPaths.map((career, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-3 p-3.5 rounded-xl bg-muted/50 border border-border/60 hover:bg-muted transition-colors"
+                    className="liyon-card-sub flex items-center gap-3 p-3.5 rounded-xl hover:bg-muted transition-colors"
                   >
                     <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
                     <span className="text-sm font-medium text-foreground">{career}</span>
@@ -207,7 +207,7 @@ export default async function ProgramDetailPage({
         {/* Sidebar Actions (4 cols) */}
         <div className="lg:col-span-4 space-y-6">
           {/* Action Box: Apply / Download */}
-          <div className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-5">
+          <div className="liyon-card p-6 rounded-2xl space-y-5">
             <h3 className="font-bold text-base text-foreground">
               {locale === "th" ? "การรับสมัครและเอกสาร" : "Admissions & Downloads"}
             </h3>
@@ -238,7 +238,7 @@ export default async function ProgramDetailPage({
                   href={program.curriculumPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-muted text-foreground font-medium text-xs transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card hover:bg-muted text-foreground font-medium text-xs transition-colors"
                 >
                   <Download className="h-4 w-4 text-primary" />
                   <span>{locale === "th" ? "ดาวน์โหลดเล่มหลักสูตร (มคอ.2)" : "Download Curriculum Spec"}</span>
@@ -250,7 +250,7 @@ export default async function ProgramDetailPage({
                   href={program.brochureUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-muted text-foreground font-medium text-xs transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card hover:bg-muted text-foreground font-medium text-xs transition-colors"
                 >
                   <FileText className="h-4 w-4 text-primary" />
                   <span>{locale === "th" ? "ดาวน์โหลดแผ่นพับหลักสูตร (PDF)" : "Download Brochure (PDF)"}</span>
@@ -260,7 +260,7 @@ export default async function ProgramDetailPage({
           </div>
 
           {/* Department Contact Card */}
-          <div className="p-6 rounded-2xl border border-border bg-muted/30 shadow-sm space-y-3">
+          <div className="liyon-card p-6 rounded-2xl space-y-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Building className="h-4 w-4 text-primary" />
               <span>{locale === "th" ? "ภาควิชาที่รับผิดชอบ" : "Responsible Department"}</span>

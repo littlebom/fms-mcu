@@ -51,10 +51,10 @@ export function QuickServicesSection({ t }: QuickServicesSectionProps) {
             <Link
               key={item.href}
               href={item.href}
-              className="group p-6 rounded-2xl bg-card border border-border/80 shadow-sm hover:shadow-md hover:border-primary/40 transition-all flex flex-col justify-between space-y-4"
+              className="liyon-card liyon-card-hover group p-6 rounded-[8px] flex flex-col justify-between space-y-4"
             >
               <div className="space-y-3">
-                <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform`}>
+                <div className={`h-12 w-12 rounded-[8px] flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform`}>
                   <Icon className="h-6 w-6" />
                 </div>
                 <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">

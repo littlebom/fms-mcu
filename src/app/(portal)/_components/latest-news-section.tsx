@@ -37,17 +37,17 @@ export function LatestNewsSection({ t, locale, articles }: LatestNewsSectionProp
       </div>
 
       {articles.length === 0 ? (
-        <div className="text-center py-12 bg-card rounded-2xl border border-border">
+        <div className="liyon-card text-center py-12 rounded-[8px]">
           <Newspaper className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-40" />
           <p className="text-sm text-muted-foreground">{t("portal.news.empty")}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {articles.map((item) => (
             <Link
               key={item.id}
               href={`/articles/${item.slug}`}
-              className="group flex flex-col rounded-2xl overflow-hidden border border-border bg-card hover:shadow-xl transition-all duration-300"
+              className="liyon-card liyon-card-hover group flex flex-col rounded-[8px] overflow-hidden"
             >
               <div className="relative h-48 w-full overflow-hidden bg-muted">
                 {item.coverImageUrl ? (

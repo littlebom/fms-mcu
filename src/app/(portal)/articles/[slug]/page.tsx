@@ -31,7 +31,7 @@ export default async function ArticleDetailPage({
         </Link>
       </div>
 
-      <article className="space-y-8">
+      <article className="liyon-card p-8 sm:p-12 rounded-3xl space-y-8">
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
@@ -43,7 +43,7 @@ export default async function ArticleDetailPage({
             {locale === "th" ? article.titleTh : article.titleEn}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-2 border-b border-border pb-6">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-2 border-b border-border/60 pb-6">
             <div className="flex items-center gap-1.5">
               <User className="h-3.5 w-3.5 text-primary" />
               <span>{article.authorName}</span>
@@ -62,7 +62,7 @@ export default async function ArticleDetailPage({
         </div>
 
         {article.coverImageUrl && (
-          <div className="relative rounded-3xl overflow-hidden border border-border shadow-md h-[360px] sm:h-[480px]">
+          <div className="relative rounded-2xl overflow-hidden border border-border/60 shadow-md h-[360px] sm:h-[480px]">
             <Image
               src={article.coverImageUrl}
               alt={locale === "th" ? article.titleTh : article.titleEn}
@@ -75,7 +75,7 @@ export default async function ArticleDetailPage({
         )}
 
         {article.excerptTh && (
-          <div className="p-6 rounded-2xl bg-muted/50 border-l-4 border-primary italic text-sm sm:text-base text-muted-foreground leading-relaxed">
+          <div className="liyon-card-sub p-6 rounded-2xl border-l-4 border-primary italic text-sm sm:text-base text-muted-foreground leading-relaxed">
             {locale === "th" ? article.excerptTh : article.excerptEn}
           </div>
         )}

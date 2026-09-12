@@ -4,9 +4,11 @@ export const MESSAGES: Dictionary = {
   // Navigation & Header
   "portal.nav.home": { th: "หน้าหลัก", en: "Home" },
   "portal.nav.programs": { th: "หลักสูตร", en: "Programs" },
+  "portal.nav.departments": { th: "หน่วยงาน", en: "Departments" },
+  "portal.nav.news": { th: "ข่าวประชาสัมพันธ์", en: "News" },
+  "portal.nav.contact": { th: "ติดต่อเรา", en: "Contact Us" },
   "portal.nav.documents": { th: "ดาวน์โหลดเอกสาร", en: "Downloads" },
   "portal.nav.facilities": { th: "บริการสถานที่", en: "Facilities" },
-  "portal.nav.news": { th: "ข่าวสาร", en: "News" },
   "portal.nav.faculty": { th: "บุคลากร", en: "Faculty" },
   "portal.nav.adminConsole": { th: "ระบบจัดการหลังบ้าน", en: "Staff Console" },
   "portal.facultyName": { th: "คณะวิทยาการจัดการและสารสนเทศศาสตร์", en: "Faculty of Management & Information" },

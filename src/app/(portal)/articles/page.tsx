@@ -62,7 +62,7 @@ export default async function ArticlesPortalPage({
 
       {/* Articles Grid */}
       {articles.length === 0 ? (
-        <div className="text-center py-20 bg-card rounded-2xl border border-border/80">
+        <div className="liyon-card text-center py-20 rounded-2xl">
           <Newspaper className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-40" />
           <h3 className="text-lg font-bold text-foreground">
             {locale === "th" ? "ยังไม่มีข่าวสารในหมวดหมู่นี้" : "No articles found in this category"}
@@ -77,7 +77,7 @@ export default async function ArticlesPortalPage({
             <Link
               key={item.id}
               href={`/articles/${item.slug}`}
-              className="group flex flex-col rounded-2xl overflow-hidden border border-border bg-card hover:shadow-xl transition-all duration-300"
+              className="liyon-card liyon-card-hover group flex flex-col rounded-2xl overflow-hidden"
             >
               <div className="relative h-52 w-full overflow-hidden bg-muted">
                 {item.coverImageUrl ? (

@@ -64,7 +64,7 @@ export default async function FacultyPortalPage({
 
       {/* Staff Grid */}
       {staffMembers.length === 0 ? (
-        <div className="text-center py-20 bg-card rounded-2xl border border-border/80">
+        <div className="liyon-card text-center py-20 rounded-2xl">
           <UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-40" />
           <h3 className="text-lg font-bold text-foreground">
             {locale === "th" ? "ไม่พบบุคลากรในหน่วยงานนี้" : "No staff found in this unit"}
@@ -75,7 +75,7 @@ export default async function FacultyPortalPage({
           {staffMembers.map((member) => (
             <div
               key={member.id}
-              className="rounded-2xl border border-border bg-card p-6 flex flex-col justify-between space-y-4 shadow-sm hover:shadow-md transition-shadow"
+              className="liyon-card liyon-card-hover rounded-2xl p-6 flex flex-col justify-between space-y-4"
             >
               <div className="space-y-4">
                 <div className="flex items-start gap-4">

@@ -15,7 +15,7 @@ export default async function PortalHomePage() {
   const tenantId = await resolveDefaultTenantId();
 
   const [articles, departments] = await Promise.all([
-    listPublishedArticles(tenantId, { limit: 3 }),
+    listPublishedArticles(tenantId, { limit: 4 }),
     listDepartments(tenantId),
   ]);
 

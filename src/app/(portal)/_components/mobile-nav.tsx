@@ -8,14 +8,12 @@ import {
   X,
   GraduationCap,
   BookOpen,
-  FileDown,
   Building2,
   Newspaper,
-  Users,
+  Phone,
   ArrowRight,
 } from "lucide-react";
 import { useT } from "@/shared/lib/i18n/client";
-import { Button } from "@/components/ui/button";
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,10 +23,9 @@ export function MobileNav() {
   const navItems = [
     { href: "/", label: t("portal.nav.home"), icon: GraduationCap },
     { href: "/programs", label: t("portal.nav.programs"), icon: BookOpen },
-    { href: "/documents", label: t("portal.nav.documents"), icon: FileDown },
-    { href: "/facilities", label: t("portal.nav.facilities"), icon: Building2 },
+    { href: "/#departments", label: t("portal.nav.departments"), icon: Building2 },
     { href: "/articles", label: t("portal.nav.news"), icon: Newspaper },
-    { href: "/faculty", label: t("portal.nav.faculty"), icon: Users },
+    { href: "/#contact", label: t("portal.nav.contact"), icon: Phone },
   ];
 
   return (
@@ -43,7 +40,7 @@ export function MobileNav() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-16 left-0 right-0 z-50 bg-[var(--glass-strong)] backdrop-blur-xl border-b border-[var(--glass-border)] shadow-[var(--shadow)] px-4 py-6 space-y-4 animate-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-16 left-0 right-0 z-50 bg-[var(--glass-strong)] backdrop-blur-[18px] border-b border-[var(--glass-border)] shadow-[var(--shadow)] px-4 py-6 space-y-4 animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -53,25 +50,27 @@ export function MobileNav() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-[var(--r-ctl)] text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "bg-[var(--glass-strong)] text-[var(--brand-ink)] font-semibold shadow-[inset_0_0_0_1px_var(--glass-border)]"
+                      : "text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--glass-hover)]"
                   }`}
                 >
-                  <Icon className="h-4 w-4 shrink-0" />
+                  <Icon className="h-4 w-4 shrink-0 text-[var(--brand-ink)] opacity-80" />
                   <span>{item.label}</span>
                 </Link>
               );
             })}
           </nav>
 
-          <div className="pt-2 border-t border-border/60">
-            <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-              <Button size="sm" variant="outline" className="w-full justify-center gap-2 text-xs font-semibold">
-                <span>{t("portal.nav.adminConsole")}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
+          <div className="pt-2 border-t border-[var(--glass-border)]">
+            <Link
+              href="/dashboard"
+              onClick={() => setIsOpen(false)}
+              className="login-btn w-full justify-center"
+            >
+              <span>{t("auth.signIn")}</span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

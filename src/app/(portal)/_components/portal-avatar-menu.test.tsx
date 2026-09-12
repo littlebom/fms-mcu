@@ -16,7 +16,7 @@ describe("PortalAvatarMenu", () => {
 
   it("renders sign-in button when user is null (guest)", () => {
     render(<PortalAvatarMenu user={null} {...defaultProps} />);
-    const link = screen.getByRole("link", { name: /แผงควบคุมเจ้าหน้าที่|เข้าสู่ระบบ/i });
+    const link = screen.getByRole("link", { name: /เข้าสู่ระบบ/i });
     expect(link).toBeDefined();
     expect(link.getAttribute("href")).toBe("/dashboard");
   });

@@ -33,9 +33,30 @@ async function homeTenantId(userId: string): Promise<string | null> {
 }
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  secret: env().AUTH_SECRET,
   trustHost: true,
   pages: { signIn: "/login" },
   session: { strategy: "jwt", maxAge: 2 * 24 * 60 * 60, updateAge: 24 * 60 * 60 },
+  jwt: {
+    async decode(params) {
+      try {
+        const { decode } = await import("@auth/core/jwt");
+        return await decode(params);
+      } catch {
+        // เมื่อ secret ไม่ตรงกับคุกกี้เก่าในเบราว์เซอร์ ให้ถือว่าเซสชันไม่ถูกต้อง แทนที่จะโยน Error
+        return null;
+      }
+    },
+  },
+  logger: {
+    error(error) {
+      // ไม่ต้องพ่น error stack trace รก console เมื่อเบราว์เซอร์ส่งคุกกี้เก่า/secret ไม่ตรง (ระบบจะ clear cookie อัตโนมัติอยู่แล้ว)
+      if (error.name === "JWTSessionError" || (error as { type?: string }).type === "JWTSessionError") {
+        return;
+      }
+      logger.error("[auth]", { error });
+    },
+  },
   providers: [
     ...(googleOAuthConfigured() ? [Google({ clientId: env().GOOGLE_CLIENT_ID, clientSecret: env().GOOGLE_CLIENT_SECRET })] : []),
     ...(microsoftOAuthConfigured()

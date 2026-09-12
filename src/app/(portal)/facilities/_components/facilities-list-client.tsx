@@ -38,7 +38,7 @@ export function FacilitiesListClient({ facilities, tenantId, locale }: Props) {
           return (
             <div
               key={fac.id}
-              className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 hover:border-primary/40"
+              className="liyon-card liyon-card-hover group rounded-2xl overflow-hidden flex flex-col justify-between"
             >
               {fac.imageUrl && (
                 <div className="h-48 w-full overflow-hidden bg-muted relative">

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { getT, getLocale } from "@/i18n/server";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { GraduationCap, Newspaper, Users, BookOpen, FileDown, Building2, Mail, Phone, MapPin, Clock } from "lucide-react";
+import { GraduationCap, Mail, Phone, MapPin, Clock } from "lucide-react";
+import { PortalNavLinks } from "./_components/portal-nav-links";
 import { MobileNav } from "./_components/mobile-nav";
 import { PortalAvatarMenu } from "./_components/portal-avatar-menu";
 import { resolveTenantSettings, auth } from "@/features/identity/server";
@@ -24,11 +25,19 @@ export default async function PortalLayout({ children }: { children: React.React
   const brandTitle = locale === "th" ? (orgNameTh || t("portal.facultyName")) : (orgNameEn || orgNameTh || t("portal.facultyName"));
   const brandSub = locale === "th" ? (orgNameEn || t("portal.universityName")) : (orgNameTh || t("portal.universityName"));
 
+  const navItems = [
+    { href: "/", label: t("portal.nav.home") },
+    { href: "/programs", label: t("portal.nav.programs") },
+    { href: "/#departments", label: t("portal.nav.departments") },
+    { href: "/articles", label: t("portal.nav.news") },
+    { href: "/#contact", label: t("portal.nav.contact") },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col text-foreground">
       {/* Top Banner Bar - Liyon Header */}
-      <header className="sticky top-0 z-50 h-16 flex items-center bg-[var(--glass)] backdrop-blur-[18px] shadow-[var(--shadow)] relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[var(--edge-grad-h)] after:pointer-events-none px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-4">
+      <header className="nav glass portal-nav px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full h-full flex items-center justify-between gap-4">
           {/* Brand Block matching Admin */}
           <Link href="/" className="brand-blk flex items-center gap-2.5 min-w-0">
             <i>
@@ -52,53 +61,13 @@ export default async function PortalLayout({ children }: { children: React.React
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1">
-            <Link
-              href="/"
-              className="px-3 py-1.5 text-sm font-medium rounded-[var(--r-ctl)] text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--glass-strong)] transition-colors"
-            >
-              {t("portal.nav.home")}
-            </Link>
-            <Link
-              href="/programs"
-              className="px-3 py-1.5 text-sm font-medium rounded-[var(--r-ctl)] text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--glass-strong)] transition-colors inline-flex items-center gap-1.5"
-            >
-              <BookOpen className="h-4 w-4" />
-              {t("portal.nav.programs")}
-            </Link>
-            <Link
-              href="/documents"
-              className="px-3 py-1.5 text-sm font-medium rounded-[var(--r-ctl)] text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--glass-strong)] transition-colors inline-flex items-center gap-1.5"
-            >
-              <FileDown className="h-4 w-4" />
-              {t("portal.nav.documents")}
-            </Link>
-            <Link
-              href="/facilities"
-              className="px-3 py-1.5 text-sm font-medium rounded-[var(--r-ctl)] text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--glass-strong)] transition-colors inline-flex items-center gap-1.5"
-            >
-              <Building2 className="h-4 w-4" />
-              {t("portal.nav.facilities")}
-            </Link>
-            <Link
-              href="/articles"
-              className="px-3 py-1.5 text-sm font-medium rounded-[var(--r-ctl)] text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--glass-strong)] transition-colors inline-flex items-center gap-1.5"
-            >
-              <Newspaper className="h-4 w-4" />
-              {t("portal.nav.news")}
-            </Link>
-            <Link
-              href="/faculty"
-              className="px-3 py-1.5 text-sm font-medium rounded-[var(--r-ctl)] text-[var(--text-2)] hover:text-[var(--text)] hover:bg-[var(--glass-strong)] transition-colors inline-flex items-center gap-1.5"
-            >
-              <Users className="h-4 w-4" />
-              {t("portal.nav.faculty")}
-            </Link>
+          {/* Desktop Navigation Links - Liyon Main Menu */}
+          <nav className="hidden lg:flex items-center" aria-label="Main menu">
+            <PortalNavLinks items={navItems} />
           </nav>
 
-          {/* Right Action Controls matching Admin */}
-          <div className="flex items-center gap-2">
+          {/* Right Action Controls matching Liyon .right */}
+          <div className="portal-right flex items-center gap-2">
             <ThemeToggle className="icon-btn" label={t("nav.themeToggle")} />
             <LanguageSwitcher className="lang" />
             <PortalAvatarMenu
@@ -118,7 +87,7 @@ export default async function PortalLayout({ children }: { children: React.React
       <main className="flex-1">{children}</main>
 
       {/* Liyon-style Ink-band Footer */}
-      <footer className="mt-24 bg-[var(--ink-band)] text-[var(--ink-band-text)] relative before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[1px] before:bg-[var(--edge-grad-h)]">
+      <footer id="contact" className="mt-24 bg-[var(--ink-band)] text-[var(--ink-band-text)] relative before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[1px] before:bg-[var(--edge-grad-h)] scroll-mt-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
             {/* Col 1: Brand & About */}

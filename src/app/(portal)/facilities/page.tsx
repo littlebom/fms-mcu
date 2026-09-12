@@ -82,11 +82,18 @@ export default async function FacilitiesPortalPage({
 
       {/* Facilities Grid */}
       {facilities.length === 0 ? (
-        <div className="text-center py-20 bg-card rounded-2xl border border-border/80">
+        <div className="liyon-card text-center py-20 rounded-2xl">
           <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-40" />
           <h3 className="text-lg font-bold text-foreground">
-            {locale === "th" ? "ไม่พบข้อมูลสถานที่ในประเภทนี้" : "No resources found in this category"}
+            {locale === "th"
+              ? "ไม่พบข้อมูลสถานที่หรือยานพาหนะในหมวดหมู่นี้"
+              : "No facilities found in this category"}
           </h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            {locale === "th"
+              ? "กรุณาเลือกหมวดหมู่อื่น หรือตรวจสอบภายหลัง"
+              : "Please try another filter category"}
+          </p>
         </div>
       ) : (
         <FacilitiesListClient facilities={facilities} tenantId={tenantId} locale={locale} />

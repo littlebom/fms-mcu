@@ -12,7 +12,7 @@ interface DepartmentsSectionProps {
 
 export function DepartmentsSection({ locale, departments }: DepartmentsSectionProps) {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <section id="departments" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 scroll-mt-20">
       <div className="text-center max-w-2xl mx-auto space-y-2">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           {locale === "th" ? "ภาควิชาและหน่วยงานภายใน" : "Academic Departments"}
@@ -24,13 +24,13 @@ export function DepartmentsSection({ locale, departments }: DepartmentsSectionPr
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {departments.map((dept) => (
           <div
             key={dept.id}
-            className="p-6 rounded-2xl border border-border bg-card/60 space-y-4 hover:border-primary/50 transition-colors"
+            className="liyon-card liyon-card-hover p-6 rounded-[8px] space-y-4"
           >
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+            <div className="h-10 w-10 rounded-[8px] bg-primary/10 flex items-center justify-center text-primary">
               {dept.isAcademic ? <BookOpen className="h-5 w-5" /> : <Award className="h-5 w-5" />}
             </div>
             <div>

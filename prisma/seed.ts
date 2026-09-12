@@ -211,7 +211,9 @@ async function main() {
 
     await prisma.article.upsert({
       where: { tenantId_slug: { tenantId: core.tenantId, slug: "admissions-2026" } },
-      update: {},
+      update: {
+        coverImageUrl: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&h=600&fit=crop",
+      },
       create: {
         tenantId: core.tenantId,
         authorId: adminUser.id,
@@ -223,7 +225,7 @@ async function main() {
         excerptEn: "Admissions are officially open for academic year 2026. Explore available programs and scholarship opportunities.",
         contentTh: "คณะเปิดรับสมัครนักศึกษาใหม่ในหลักสูตรวิทยาการคอมพิวเตอร์ และเทคโนโลยีสารสนเทศ ทั้งหลักสูตรปกติและนานาชาติ ตรวจสอบคุณสมบัติและกำหนดการได้ที่ระบบรับสมัครของมหาวิทยาลัย",
         contentEn: "Applications are now open for Computer Science and Information Technology degree programs. Scholarships are available for top applicants.",
-        coverImageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&h=600&fit=crop",
+        coverImageUrl: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&h=600&fit=crop",
         isPinned: true,
         isFeatured: true,
         status: "PUBLISHED",
@@ -250,8 +252,33 @@ async function main() {
         isPinned: false,
         isFeatured: true,
         status: "PUBLISHED",
-        publishedAt: new Date(),
+        publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
         viewCount: 189,
+      },
+    });
+
+    await prisma.article.upsert({
+      where: { tenantId_slug: { tenantId: core.tenantId, slug: "ai-smart-lab-opening-2026" } },
+      update: {
+        coverImageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=600&fit=crop",
+      },
+      create: {
+        tenantId: core.tenantId,
+        authorId: adminUser.id,
+        categoryId: catAcademic.id,
+        titleTh: "เปิดตัวศูนย์วิจัยและนวัตกรรมการเรียนรู้ AI Smart Lab แห่งใหม่เพื่อการศึกษาและวิจัยขั้นสูง",
+        titleEn: "Inauguration of the New State-of-the-Art AI Smart Lab for Advanced Research",
+        slug: "ai-smart-lab-opening-2026",
+        excerptTh: "คณะเปิดให้บริการห้องปฏิบัติการประมวลผลประสิทธิภาพสูง สนับสนุนการเรียนการสอนด้าน Deep Learning และ Cloud Computing แก่นักศึกษา",
+        excerptEn: "Empowering students and researchers with cutting-edge GPU clusters for Deep Learning and Cloud Computing projects.",
+        contentTh: "ศูนย์วิจัย AI Smart Lab ได้รับการติดตั้งเซิร์ฟเวอร์ประมวลผลขั้นสูงและสิ่งอำนวยความสะดวกระดับองค์กร เพื่อรองรับโครงงานวิจัยของนักศึกษาและการวิจัยร่วมกับภาคอุตสาหกรรม โดยเปิดให้นักศึกษาทุกชั้นปีเข้าใช้งานและทดสอบระบบได้ตลอด 24 ชั่วโมง",
+        contentEn: "The AI Smart Lab features high-performance GPU clusters, collaborative ideation spaces, and enterprise-grade networking designed to foster cross-disciplinary innovation between students and industry partners.",
+        coverImageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=600&fit=crop",
+        isPinned: false,
+        isFeatured: true,
+        status: "PUBLISHED",
+        publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        viewCount: 320,
       },
     });
   }
